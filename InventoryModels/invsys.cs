@@ -131,7 +131,7 @@ namespace InventoryModels
                {
                   SimulationTable[i].BeginningInventory = SimulationTable[i - 1].EndingInventory;                   
                }
-               if(!order.deliverd)
+               if(order.day<0&&!order.deliverd)
                 {
                     SimulationTable[i].BeginningInventory += order.quantity;
                     order.deliverd = true;
