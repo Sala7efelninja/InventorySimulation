@@ -10,9 +10,8 @@ namespace InventoryModels
     {
        List<int> demand_random;
 
-       List<int> leadday_random;
-  
-       Random r;
+
+        Random r;
 
         public void start_simulation(string filename)
         {
@@ -20,6 +19,7 @@ namespace InventoryModels
             calc_distrbution();
             generate_random();
             generate_table();
+            per();
         }
        
         private void inputs(string filename)
@@ -100,11 +100,9 @@ namespace InventoryModels
        {
            r = new Random();
            demand_random = new List<int>();
-           leadday_random = new List<int>();
            for(int i=0;i<NumberOfDays;i++)
            {
                demand_random.Add(r.Next(1, 101));
-               leadday_random.Add(r.Next(1, 101));
            }
        }
 
@@ -168,7 +166,7 @@ namespace InventoryModels
                 if (dayWithinCycle == ReviewPeriod)
                {
                    SimulationTable[i].OrderQuantity = OrderUpTo - SimulationTable[i].EndingInventory + SimulationTable[i].ShortageQuantity;
-                   SimulationTable[i].RandomLeadDays = r.Next(1,11);
+                   SimulationTable[i].RandomLeadDays = r.Next(1,101);
                    SimulationTable[i].LeadDays = find_leadday(SimulationTable[i].RandomLeadDays);
                     order=new Order(SimulationTable[i].LeadDays, SimulationTable[i].OrderQuantity);
                     order.deliverd = false;
@@ -192,9 +190,23 @@ namespace InventoryModels
                day++;
            }
        }
+        private void per()
+        {
+            decimal sum1 = 0;
+            decimal sum2 = 0;
+            for (int i = 0; i < NumberOfDays; i++)
+            {
+                sum1 += SimulationTable[i].EndingInventory;
+                sum2 += SimulationTable[i].ShortageQuantity;
+            }
+
+            PerformanceMeasures.EndingInventoryAverage = sum1 / NumberOfDays;
+            PerformanceMeasures.ShortageQuantityAverage = sum2 / NumberOfDays;
+
+        }
 
 
-       private int find_demand(int random)
+        private int find_demand(int random)
        {
            int demand = 0;
 

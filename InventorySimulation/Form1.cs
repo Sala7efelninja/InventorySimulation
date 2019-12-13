@@ -43,7 +43,7 @@ namespace InventorySimulation
         {
             system = new invsys();
             string file = comboBox1.SelectedItem.ToString();
-            
+            table.Clear();
 
             int tcase = Int32.Parse(file);
 
