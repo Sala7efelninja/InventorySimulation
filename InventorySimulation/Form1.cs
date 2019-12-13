@@ -43,7 +43,10 @@ namespace InventorySimulation
         {
             system = new invsys();
             string file = comboBox1.SelectedItem.ToString();
+            
+
             int tcase = Int32.Parse(file);
+
             system.start_simulation(tests[tcase-1]);
             string[] row;
             for(int i=0;i<system.NumberOfDays;i++)
@@ -64,7 +67,8 @@ namespace InventorySimulation
                     table.Rows.Add(row);
                    
             }
- 
+            string msg = TestingManager.Test(system, tests[int.Parse(file)-1]);
+            MessageBox.Show(msg);
 
         }
     }

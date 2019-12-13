@@ -80,14 +80,14 @@ namespace InventoryModels
                if (i == 0)
                {
                    LeadDaysDistribution[i].CummProbability = LeadDaysDistribution[i].Probability;
-                   LeadDaysDistribution[i].MaxRange = Decimal.ToInt32(LeadDaysDistribution[i].CummProbability * 10);
+                   LeadDaysDistribution[i].MaxRange = Decimal.ToInt32(LeadDaysDistribution[i].CummProbability * 100);
                    continue;
 
                }
 
                LeadDaysDistribution[i].CummProbability = LeadDaysDistribution[i - 1].CummProbability + LeadDaysDistribution[i].Probability;
                LeadDaysDistribution[i].MinRange = LeadDaysDistribution[i - 1].MaxRange + 1;
-               LeadDaysDistribution[i].MaxRange = Decimal.ToInt32(LeadDaysDistribution[i].CummProbability * 10);
+               LeadDaysDistribution[i].MaxRange = Decimal.ToInt32(LeadDaysDistribution[i].CummProbability * 100);
 
 
                if (LeadDaysDistribution[i].MinRange == LeadDaysDistribution[i].MaxRange)
@@ -104,7 +104,7 @@ namespace InventoryModels
            for(int i=0;i<NumberOfDays;i++)
            {
                demand_random.Add(r.Next(1, 101));
-               leadday_random.Add(r.Next(1, 11));
+               leadday_random.Add(r.Next(1, 101));
            }
        }
 
@@ -129,7 +129,8 @@ namespace InventoryModels
                }
                else
                {
-                  SimulationTable[i].BeginningInventory = SimulationTable[i - 1].EndingInventory;                   
+                  SimulationTable[i].BeginningInventory = SimulationTable[i - 1].EndingInventory;
+     
                }
                if(order.day<0&&!order.deliverd)
                 {
@@ -142,10 +143,12 @@ namespace InventoryModels
                SimulationTable[i].Demand=find_demand(demand_random[i]);
                //ending inv
 
-               SimulationTable[i].EndingInventory = SimulationTable[i].BeginningInventory - (SimulationTable[i].Demand + SimulationTable[i].ShortageQuantity);
+               SimulationTable[i].EndingInventory = SimulationTable[i].BeginningInventory - (SimulationTable[i].Demand);
+                if (i != 0)
+                    SimulationTable[i].EndingInventory -= SimulationTable[i - 1].ShortageQuantity;
 
                //sho
-               if (SimulationTable[i].EndingInventory < 0)
+                if (SimulationTable[i].EndingInventory < 0)
                {
                    if(i==0)
                    {
@@ -154,7 +157,7 @@ namespace InventoryModels
                    }
                    else
                    {
-                   SimulationTable[i].ShortageQuantity = (SimulationTable[i].EndingInventory * -1)+(SimulationTable[i-1].ShortageQuantity);
+                   SimulationTable[i].ShortageQuantity = (SimulationTable[i].Demand - SimulationTable[i].BeginningInventory) +(SimulationTable[i-1].ShortageQuantity);
                    SimulationTable[i].EndingInventory = 0;
               
                    }
