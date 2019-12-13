@@ -103,24 +103,25 @@ namespace InventoryModels
            leadday_random = new List<int>();
            for(int i=0;i<NumberOfDays;i++)
            {
-               demand_random.Add(r.Next(1, 100));
-               leadday_random.Add(r.Next(1, 10));
+               demand_random.Add(r.Next(1, 101));
+               leadday_random.Add(r.Next(1, 11));
            }
        }
 
        private void generate_table()
        {
            int cycle=1;
-           int d_w_c=1;
+           int dayWithinCycle=1;
            int day = 1;
            int du = 0;
            SimulationTable = new List<SimulationCase>();
+            Order order=new Order(StartLeadDays-1, StartOrderQuantity);
            for (int i = 0; i < NumberOfDays; i++)
            {
                SimulationTable.Add(new SimulationCase());
                SimulationTable[i].Day =day;
                SimulationTable[i].Cycle = cycle;
-               SimulationTable[i].DayWithinCycle = d_w_c;
+               SimulationTable[i].DayWithinCycle = dayWithinCycle;
                 //begin inven
                if(i==0)
                {
@@ -128,16 +129,14 @@ namespace InventoryModels
                }
                else
                {
-                   if(day %ReviewPeriod==0)
-                   {
-                       SimulationTable[i].BeginningInventory = SimulationTable[i-1].OrderQuantity;
-                   }
-                   else
-                  SimulationTable[i].BeginningInventory = SimulationTable[i - 1].EndingInventory; 
-               
-
-                   
+                  SimulationTable[i].BeginningInventory = SimulationTable[i - 1].EndingInventory;                   
                }
+               if(!order.deliverd)
+                {
+                    SimulationTable[i].BeginningInventory += order.quantity;
+                    order.deliverd = true;
+
+                }
 
                SimulationTable[i].RandomDemand = demand_random[i];
                SimulationTable[i].Demand=find_demand(demand_random[i]);
@@ -160,22 +159,31 @@ namespace InventoryModels
               
                    }
                }
-               //order qu
-               if (d_w_c == ReviewPeriod)
+
+                
+                //order qu
+                if (dayWithinCycle == ReviewPeriod)
                {
                    SimulationTable[i].OrderQuantity = OrderUpTo - SimulationTable[i].EndingInventory + SimulationTable[i].ShortageQuantity;
-                   SimulationTable[i].RandomLeadDays = leadday_random[i];
-                   SimulationTable[i].LeadDays = find_leadday(leadday_random[i]);
-               }
-               //d.u.o.a
+                   SimulationTable[i].RandomLeadDays = r.Next(1,11);
+                   SimulationTable[i].LeadDays = find_leadday(SimulationTable[i].RandomLeadDays);
+                    order=new Order(SimulationTable[i].LeadDays, SimulationTable[i].OrderQuantity);
+                    order.deliverd = false;
+                }
+                //d.u.o.a
 
-               if(d_w_c==ReviewPeriod)
+                if (order.day >= 0)
+                {
+                    SimulationTable[i].orderArrival = order.day;
+                    order.day = order.day - 1;
+                }
+                if (dayWithinCycle==ReviewPeriod)
                {
                    cycle++;
-                   d_w_c = 1;
+                   dayWithinCycle = 1;
                }
                else
-               d_w_c++;
+               dayWithinCycle++;
 
 
                day++;

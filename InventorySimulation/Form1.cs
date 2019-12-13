@@ -19,10 +19,10 @@ namespace InventorySimulation
         public Form1()
         {
             InitializeComponent();
-            tests = new List<string>() {"C:\\Users\\lenovo\\Desktop\\simulation task4\\[Students]_Template\\InventorySimulation\\InventorySimulation\\bin\\Debug\\TestCase1.txt"
-                ,"C:\\Users\\lenovo\\Desktop\\simulation task4\\[Students]_Template\\InventorySimulation\\InventorySimulation\\bin\\Debug\\TestCase2.txt",
-                "C:\\Users\\lenovo\\Desktop\\simulation task4\\[Students]_Template\\InventorySimulation\\InventorySimulation\\bin\\Debug\\TestCase3.txt",
-                "C:\\Users\\lenovo\\Desktop\\simulation task4\\[Students]_Template\\InventorySimulation\\InventorySimulation\\bin\\Debug\\TestCase4.txt"};
+            tests = new List<string>() {"TestCase1.txt"
+                ,"TestCase2.txt",
+                "TestCase3.txt",
+                "TestCase4.txt"};
             List<string> t = new List<string>(){"1","2","3","4"};
             comboBox1.DataSource = t;
         }
@@ -34,7 +34,7 @@ namespace InventorySimulation
             table.Columns.Add("RandomDemand", typeof(int)); table.Columns.Add("Demand", typeof(int));
             table.Columns.Add("EndingInventory", typeof(int)); table.Columns.Add("ShortageQuantity", typeof(int));
             table.Columns.Add("OrderQuantity", typeof(int)); table.Columns.Add("RandomLeadDays", typeof(int));
-            table.Columns.Add("LeadDays", typeof(int)); table.Columns.Add("d.u.o.a", typeof(int));
+            table.Columns.Add("LeadDays", typeof(int)); table.Columns.Add("OrderArrival", typeof(int));
             dataGridView1.DataSource = table;  
                
         }
@@ -60,7 +60,7 @@ namespace InventorySimulation
                     row[8] = system.SimulationTable[i].OrderQuantity.ToString();
                     row[9] = system.SimulationTable[i].RandomLeadDays.ToString();
                     row[10] = system.SimulationTable[i].LeadDays.ToString();
-                    row[11] = system.SimulationTable[i].Day.ToString();
+                row[11] = system.SimulationTable[i].orderArrival.ToString();
                     table.Rows.Add(row);
                    
             }
